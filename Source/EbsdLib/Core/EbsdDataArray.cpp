@@ -96,31 +96,31 @@ T byteSwap(T value)
 template <class T, std::enable_if_t<sizeof(T) == sizeof(uint16_t)>* = nullptr>
 T byteSwap(T value)
 {
-  return SIMPL_BYTE_SWAP_16(value);
+  return EBSD_BYTE_SWAP_16(value);
 }
 
 template <class T, std::enable_if_t<sizeof(T) == sizeof(uint32_t) && !std::is_floating_point<T>::value>* = nullptr>
 T byteSwap(T value)
 {
-  return SIMPL_BYTE_SWAP_32(value);
+  return EBSD_BYTE_SWAP_32(value);
 }
 
 template <class T, std::enable_if_t<sizeof(T) == sizeof(uint32_t) && std::is_floating_point<T>::value>* = nullptr>
 T byteSwap(T value)
 {
-  return bit_cast<T>(SIMPL_BYTE_SWAP_32(bit_cast<uint32_t>(value)));
+  return bit_cast<T>(EBSD_BYTE_SWAP_32(bit_cast<uint32_t>(value)));
 }
 
 template <class T, std::enable_if_t<sizeof(T) == sizeof(uint64_t) && !std::is_floating_point<T>::value>* = nullptr>
 T byteSwap(T value)
 {
-  return SIMPL_BYTE_SWAP_64(value);
+  return EBSD_BYTE_SWAP_64(value);
 }
 
 template <class T, std::enable_if_t<sizeof(T) == sizeof(uint64_t) && std::is_floating_point<T>::value>* = nullptr>
 T byteSwap(T value)
 {
-  return bit_cast<T>(SIMPL_BYTE_SWAP_64(bit_cast<uint64_t>(value)));
+  return bit_cast<T>(EBSD_BYTE_SWAP_64(bit_cast<uint64_t>(value)));
 }
 
 } // namespace
@@ -421,50 +421,50 @@ EbsdLib::NumericTypes::Type EbsdDataArray<T>::getType() const
 {
   if(std::is_same<T, int8_t>::value)
   {
-    return SIMPL::NumericTypes::Type::Int8;
+    return EbsdLib::NumericTypes::Type::Int8;
   }
   else if(std::is_same<T, uint8_t>::value)
   {
-    return SIMPL::NumericTypes::Type::UInt8;
+    return EbsdLib::NumericTypes::Type::UInt8;
   }
   else if(std::is_same<T, int16_t>::value)
   {
-    return SIMPL::NumericTypes::Type::Int16;
+    return EbsdLib::NumericTypes::Type::Int16;
   }
   else if(std::is_same<T, uint16_t>::value)
   {
-    return SIMPL::NumericTypes::Type::UInt16;
+    return EbsdLib::NumericTypes::Type::UInt16;
   }
   else if(std::is_same<T, int32_t>::value)
   {
-    return SIMPL::NumericTypes::Type::Int32;
+    return EbsdLib::NumericTypes::Type::Int32;
   }
   else if(std::is_same<T, uint32_t>::value)
   {
-    return SIMPL::NumericTypes::Type::UInt32;
+    return EbsdLib::NumericTypes::Type::UInt32;
   }
   else if(std::is_same<T, int64_t>::value)
   {
-    return SIMPL::NumericTypes::Type::Int64;
+    return EbsdLib::NumericTypes::Type::Int64;
   }
   else if(std::is_same<T, uint64_t>::value)
   {
-    return SIMPL::NumericTypes::Type::UInt64;
+    return EbsdLib::NumericTypes::Type::UInt64;
   }
   else if(std::is_same<T, float>::value)
   {
-    return SIMPL::NumericTypes::Type::Float;
+    return EbsdLib::NumericTypes::Type::Float;
   }
   else if(std::is_same<T, double>::value)
   {
-    return SIMPL::NumericTypes::Type::Double;
+    return EbsdLib::NumericTypes::Type::Double;
   }
   else if(std::is_same<T, bool>::value)
   {
-    return SIMPL::NumericTypes::Type::Bool;
+    return EbsdLib::NumericTypes::Type::Bool;
   }
 
-  return SIMPL::NumericTypes::Type::UnknownNumType;
+  return EbsdLib::NumericTypes::Type::UnknownNumType;
 }
 
 // -----------------------------------------------------------------------------

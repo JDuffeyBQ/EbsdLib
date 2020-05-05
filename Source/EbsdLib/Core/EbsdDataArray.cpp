@@ -371,8 +371,10 @@ typename EbsdDataArray<T>::Pointer EbsdDataArray<T>::WrapPointer(T* data, size_t
   // Allocate on the heap
   auto d = std::make_shared<EbsdDataArray<T>>(numTuples, name, compDims, static_cast<T>(0), false);
 
-  d->m_Array = data;        // Now set the internal array to the raw pointer
-  d->m_OwnsData = ownsData; // Set who owns the data, i.e., who is going to "free" the memory
+  // Now set the internal array to the raw pointer
+  d->m_Array = data;
+  // Set who owns the data, i.e., who is going to "free" the memory
+  d->m_OwnsData = ownsData;
   if(nullptr != data)
   {
     d->m_IsAllocated = true;
@@ -530,9 +532,6 @@ void EbsdDataArray<T>::getXdmfTypeAndSize(QString& xdmfTypeName, int& precision)
     precision = 1;
   }
 }
-// This line must be here, because we are overloading the copyData pure  function in EbsdDataArray<T>.
-// This is required so that other classes can call this version of copyData from the subclasses.
-// using EbsdDataArray<T>::copyFromArray;
 
 // -----------------------------------------------------------------------------
 template <typename T>
@@ -579,8 +578,8 @@ bool EbsdDataArray<T>::copyFromArray(size_t destTupleOffset, EbsdDataArray<T>::C
     return false;
   }
 
-  auto srcBegin = source->cbegin() + (srcTupleOffset * m_NumComponents);
-  auto srcEnd = srcBegin + (totalSrcTuples * m_NumComponents);
+  auto srcBegin = source->cbegin() + (srcTupleOffset * source->m_NumComponents);
+  auto srcEnd = srcBegin + (totalSrcTuples * source->m_NumComponents);
   auto dstBegin = begin() + (destTupleOffset * m_NumComponents);
   std::copy(srcBegin, srcEnd, dstBegin);
   return true;
@@ -733,12 +732,14 @@ int32_t EbsdDataArray<T>::eraseTuples(const comp_dims_type& idxs)
     }
   }
 
-  if(k == idxs.size()) // Only front elements are being dropped
+  // Only front elements are being dropped
+  if(k == idxs.size())
   {
     auto srcBegin = begin() + (j * m_NumComponents);
     auto srcEnd = srcBegin + (getNumberOfTuples() - idxs.size()) * m_NumComponents;
     std::copy(srcBegin, srcEnd, newArray);
-    deallocate(); // We are done copying - delete the current m_Array
+    // We are done copying - delete the current m_Array
+    deallocate();
     m_Size = newSize;
     m_Array = newArray;
     m_OwnsData = true;
@@ -1099,6 +1100,7 @@ int EbsdDataArray<T>::writeH5Data(hid_t parentId, comp_dims_type tDims) const
   return H5EbsdDataArrayWriter::writeEbsdDataArray<Self>(parentId, this, tDims);
 }
 #endif
+
 // -----------------------------------------------------------------------------
 template <typename T>
 int EbsdDataArray<T>::writeXdmfAttribute(QTextStream& out, const int64_t* volDims, const QString& hdfFileName, const QString& groupPath, const QString& label) const
@@ -1373,16 +1375,7 @@ typename EbsdDataArray<T>::size_type EbsdDataArray<T>::size() const
 {
   return m_Size;
 }
-template <typename T>
-typename EbsdDataArray<T>::size_type EbsdDataArray<T>::max_size() const
-{
-  return std::min(static_cast<size_type>(std::numeric_limits<difference_type>::max()), static_cast<size_t>(-1) / sizeof(value_type));
-}
-//  void resize(size_type n)
-//  {
-//    resizeAndExtend(n);
-//  }
-// void resize (size_type n, const value_type& val);
+
 template <typename T>
 typename EbsdDataArray<T>::size_type EbsdDataArray<T>::capacity() const noexcept
 {
@@ -1394,8 +1387,6 @@ bool EbsdDataArray<T>::empty() const noexcept
 {
   return (m_Size == 0);
 }
-// reserve()
-// shrink_to_fit()
 
 // ######### Element Access #########
 
@@ -1437,10 +1428,6 @@ void EbsdDataArray<T>::pop_back()
 {
   resizeAndExtend(m_Size - 1);
 }
-// insert
-// iterator erase (const_iterator position)
-// iterator erase (const_iterator first, const_iterator last);
-// swap
 
 // -----------------------------------------------------------------------------
 template <typename T>
@@ -1457,8 +1444,6 @@ void EbsdDataArray<T>::clear()
   m_IsAllocated = false;
   m_NumTuples = 0;
 }
-// emplace
-// emplace_back
 
 // =================================== END STL COMPATIBLE INTERFACe ===================================================
 
@@ -1529,7 +1514,8 @@ T* EbsdDataArray<T>::resizeAndExtend(size_t size)
   size_t newSize = 0;
   size_t oldSize = 0;
 
-  if(size == m_Size) // Requested size is equal to current size.  Do nothing.
+  // Requested size is equal to current size.  Do nothing.
+  if(size == m_Size)
   {
     return m_Array;
   }

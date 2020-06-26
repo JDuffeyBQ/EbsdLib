@@ -99,3 +99,8 @@ if(EbsdLib_ENABLE_TESTING)
 endif()
 
 include(${EbsdLibProj_SOURCE_DIR}/Source/Apps/SourceList.cmake)
+
+option(EbsdLib_ENABLE_PYTHON "Enable Python binding using pybind11" OFF)
+if(EbsdLib_ENABLE_PYTHON)
+	add_subdirectory(${EbsdLibProj_SOURCE_DIR}/Source/Binding)
+endif()
